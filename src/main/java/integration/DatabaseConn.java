@@ -9,6 +9,7 @@ public class DatabaseConn {
 
     private Connection dbConnection = null;
     private static final String INSERT_QUERY = "INSERT INTO customer (name, address, zipCode, socialSecurityNo) VALUES (?, ?, ?, ?)";
+    private static final String DELETE_QUERY = "DELETE FROM customer WHERE id = ?";
     private static final String SEARCH_CUSTOMER_QUERY = "SELECT * FROM customer WHERE ";
 
     private void connectToDatabase(){
@@ -196,5 +197,26 @@ public class DatabaseConn {
             return customers.get(0);
         }
 
+    }
+
+    public void deleteCustomer(int id){
+        connectToDatabase();
+        PreparedStatement stmt = null;
+
+        try{
+            stmt = dbConnection.prepareStatement(DELETE_QUERY);
+            stmt.setInt(1, id);
+            stmt.execute();
+        }catch (SQLException e){
+            System.out.println("SQL exception insert: " + e.getMessage());
+        } finally {
+            if(stmt != null){
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
     }
 }

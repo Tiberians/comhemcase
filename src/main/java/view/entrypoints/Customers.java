@@ -46,7 +46,7 @@ private DatabaseConn databaseConn = new DatabaseConn();
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     public void deleteCustomer(@PathParam("id") int id){
-        System.out.println(id);
+        databaseConn.deleteCustomer(id);
     }
 
 }
