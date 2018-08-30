@@ -103,12 +103,12 @@ public class DatabaseConn {
         String query = SEARCH_CUSTOMER_QUERY;
         boolean firstChange = true;
 
-        if (cd.getName() != null) {
+        if (cd.getName() != null && !cd.getName().isEmpty()) {
             query += ("name = " + "'" + cd.getName() + "'");
             firstChange = false;
         }
 
-        if (cd.getAddress() != null){
+        if (cd.getAddress() != null && !cd.getAddress().isEmpty()){
             if(!firstChange){
                 query += (" AND ");
             }
@@ -116,7 +116,7 @@ public class DatabaseConn {
             firstChange = false;
         }
 
-        if (cd.getSocialSecurityNo() != null){
+        if (cd.getSocialSecurityNo() != null && !cd.getSocialSecurityNo().isEmpty()){
             if(!firstChange){
                 query += (" AND ");
             }
