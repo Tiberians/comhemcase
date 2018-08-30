@@ -51,35 +51,35 @@ public class DatabaseConn {
         }
     }
 
-    public void updateCustomer(int id, String name, String address, int zipCode) {
+    public void updateCustomer(CustomerData cd) {
         connectToDatabase();
         Statement stmt = null;
         boolean update = false;
 
         String query = "UPDATE customer SET ";
 
-        if (name != null) {
-            query += ("name = " + "'" + name + "'");
+        if (cd.getName() != null) {
+            query += ("name = " + "'" + cd.getName() + "'");
             update = true;
         }
-        if (address != null){
+        if (cd.getAddress() != null){
             if(update){
                 query += (", ");
             }
-            query += ("address = " + "'" + address + "'");
+            query += ("address = " + "'" + cd.getAddress() + "'");
             update = true;
         }
-        if (zipCode != 0){
+        if (cd.getZipCode() != 0){
             if(update){
                 query += (", ");
             }
-            query += ("zipCode = " + "'" + zipCode + "'");
+            query += ("zipCode = " + "'" + cd.getZipCode() + "'");
             update = true;
         }
 
         if(update) {
 
-            query += " WHERE id = " + id;
+            query += " WHERE id = " + cd.getId();
             System.out.println(query);
 
             try {
@@ -99,40 +99,46 @@ public class DatabaseConn {
         }
     }
 
-    public CustomerData searchCustomerById(int id){
-        ArrayList<CustomerData> customers = searchCustomer("id", String.valueOf(id));
+    public ArrayList<CustomerData> searchCustomers (CustomerData cd){
+        String query = SEARCH_CUSTOMER_QUERY;
+        boolean firstChange = true;
 
-        if(customers.size() < 1){
-            return null;
-        }else{
-            return customers.get(0);
+        if (cd.getName() != null) {
+            query += ("name = " + "'" + cd.getName() + "'");
+            firstChange = false;
         }
-    }
 
-    public ArrayList<CustomerData> searchCustomerByName(String name){
-        return searchCustomer("name", name);
-    }
+        if (cd.getAddress() != null){
+            if(!firstChange){
+                query += (" AND ");
+            }
+            query += ("address = " + "'" + cd.getAddress() + "'");
+            firstChange = false;
+        }
 
-    public ArrayList<CustomerData> searchCustomerByZipCode(int zipCode){
-        return searchCustomer("zipCode", String.valueOf(zipCode));
-    }
+        if (cd.getSocialSecurityNo() != null){
+            if(!firstChange){
+                query += (" AND ");
+            }
+            query += ("socialSecurityNo = " + "'" + cd.getSocialSecurityNo() + "'");
+            firstChange = false;
+        }
 
-    public ArrayList<CustomerData> searchCustomerByAdress(String address){
-        return searchCustomer("address", address);
-    }
+        if (cd.getZipCode() != 0){
+            if(!firstChange){
+                query += (" AND ");
+            }
+            query += ("zipCode = " + "'" + cd.getZipCode() + "'");
+            firstChange = false;
+        }
 
-    public ArrayList<CustomerData> searchCustomerBySocialSecurityNo(String socialSecurityNo){
-        return searchCustomer("socialSecurityNo", socialSecurityNo);
-    }
-
-    private ArrayList<CustomerData> searchCustomer(String searchCriteria, String searchTerm){
         connectToDatabase();
         Statement stmt = null;
         ArrayList<CustomerData> customers = new ArrayList<>();
 
         try{
             stmt = dbConnection.createStatement();
-            ResultSet rs = stmt.executeQuery(SEARCH_CUSTOMER_QUERY + searchCriteria + " = " + "'" + searchTerm + "'");
+            ResultSet rs = stmt.executeQuery(query);
 
             while(rs.next()) {
                 int id = rs.getInt("id");
@@ -154,5 +160,41 @@ public class DatabaseConn {
             }
         }
         return customers;
+    }
+
+    public CustomerData searchCustomerById(int id){
+        connectToDatabase();
+        Statement stmt = null;
+        ArrayList<CustomerData> customers = new ArrayList<>();
+
+        try{
+            stmt = dbConnection.createStatement();
+            ResultSet rs = stmt.executeQuery(SEARCH_CUSTOMER_QUERY + "id = " + "'" + id + "'");
+
+            while(rs.next()) {
+                String name = rs.getString("name");
+                String address = rs.getString("address");
+                int zipCode = rs.getInt("zipCode");
+                String socialSecurityNo = rs.getString("socialSecurityNo");
+                customers.add(new CustomerData(name, address, socialSecurityNo, zipCode, id));
+            }
+        }catch (SQLException e){
+            System.out.println("SQL exception: " + e.getMessage());
+        }finally {
+            if(stmt != null){
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+
+        if(customers.size() < 1){
+            return null;
+        }else{
+            return customers.get(0);
+        }
+
     }
 }

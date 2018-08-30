@@ -2,6 +2,7 @@ package view.entrypoints;
 
 
 import integration.DatabaseConn;
+import org.glassfish.jersey.internal.inject.Custom;
 import test.TestUsers;
 import common.CustomerData;
 
@@ -22,10 +23,9 @@ private DatabaseConn databaseConn = new DatabaseConn();
     }
 
     @PUT
-    @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void updateCustomer(@PathParam("id") int id) {
-
+    public void updateCustomer(CustomerData customerData) {
+        databaseConn.updateCustomer(customerData);
     }
 
     @GET
@@ -37,8 +37,8 @@ private DatabaseConn databaseConn = new DatabaseConn();
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public void getSpecificCustomer(@PathParam("id") int id) {
-        System.out.println(id);
+    public CustomerData getSpecificCustomer(@PathParam("id") int id) {
+        return databaseConn.searchCustomerById(id);
     }
 
 
