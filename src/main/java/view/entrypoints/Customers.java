@@ -1,6 +1,7 @@
 package view.entrypoints;
 
 
+import integration.DatabaseConn;
 import test.TestUsers;
 import common.CustomerData;
 
@@ -11,17 +12,13 @@ import java.util.List;
 @Path("/customers")
 public class Customers {
 private TestUsers  test = new TestUsers();
+private DatabaseConn databaseConn = new DatabaseConn();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public void registerNewCustomer(CustomerData customerData) {
-        System.out.println(customerData.getName());
-        System.out.println(customerData.getAddress());
-        System.out.println(customerData.getZipCode());
-        System.out.println(customerData.getSocialSecurityNo());
-
-
+        databaseConn.createCustomer(customerData);
     }
 
     @PUT
