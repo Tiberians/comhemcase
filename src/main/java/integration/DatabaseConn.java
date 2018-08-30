@@ -1,5 +1,6 @@
 package integration;
 
+import common.AuthenticationData;
 import common.CustomerData;
 
 import java.sql.*;
@@ -218,5 +219,31 @@ public class DatabaseConn {
                 }
             }
         }
+    }
+
+    public boolean login(AuthenticationData authenticationData){
+        connectToDatabase();
+        Statement stmt = null;
+        String query = "SELECT password FROM user WHERE userName = " + "'" + authenticationData.getUsername() + "'";
+        String passwordCheck = "";
+
+        try{
+            stmt = dbConnection.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            while(rs.next()){
+                passwordCheck = rs.getString("password");
+            }
+        }catch(SQLException e){
+            System.out.println("SQL Exception: " + e.getMessage());
+        }finally {
+            if(stmt != null){
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+        return authenticationData.getPassword().equals(passwordCheck) ? true : false;
     }
 }

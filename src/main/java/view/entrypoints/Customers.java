@@ -41,12 +41,10 @@ private DatabaseConn databaseConn = new DatabaseConn();
         return databaseConn.searchCustomerById(id);
     }
 
-
     @DELETE
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     public void deleteCustomer(@PathParam("id") int id){
         databaseConn.deleteCustomer(id);
     }
-
 }
