@@ -2,6 +2,7 @@ package integration;
 
 import common.AuthenticationData;
 import common.CustomerData;
+import common.UserData;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -131,7 +132,6 @@ public class DatabaseConn {
                 query += (" AND ");
             }
             query += ("zipCode = " + "'" + cd.getZipCode() + "'");
-            firstChange = false;
         }
 
         connectToDatabase();
@@ -245,5 +245,30 @@ public class DatabaseConn {
             }
         }
         return authenticationData.getPassword().equals(passwordCheck) ? true : false;
+    }
+
+    public int getHighScore(UserData userData){
+        connectToDatabase();
+        Statement stmt = null;
+        int score = 0;
+
+        try{
+            stmt = dbConnection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT score FROM highScore WHERE sellerId = '" + userData.getId() + "'");
+            while(rs.next()){
+                score = rs.getInt("score");
+            }
+        }catch (SQLException e){
+            System.out.println("SQL exception: " + e.getMessage());
+        }finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+        return score;
     }
 }

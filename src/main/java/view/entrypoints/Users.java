@@ -5,7 +5,6 @@ package view.entrypoints;
 import common.AuthenticationData;
 import integration.DatabaseConn;
 
-import javax.print.attribute.standard.Media;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
